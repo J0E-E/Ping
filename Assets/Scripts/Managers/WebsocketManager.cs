@@ -3,58 +3,100 @@ using System.Threading.Tasks;
 using NativeWebSocket;
 using UnityEngine;
 
-public class WebsocketManager: Manager
+public enum ConnectionState
 {
-    private WebSocket webSocket;
-    private int _maxRetries = 5;
-    private bool _isHandlingReconnect = false;
-    private WSMessageRoutingManager _router => ManagerLocator.Get<WSMessageRoutingManager>();
+    Disconnected,
+    Connected,
+    LoggedIn,
+    Reconnecting
+}
 
-    private async void Start()
-    { 
-        await ConnectToServer();
+public class WebsocketManager: Manager
+{`
+    private static WebSocket _webSocket;
+    [SerializeField] private int maxRetries = 5;
+    private static bool _isHandlingReconnect = false;
+
+    private static ConnectionState _connectionState = ConnectionState.Disconnected;
+    private static WSMessageRoutingManager Router => ManagerLocator.Get<WSMessageRoutingManager>();
+
+    public static event Action<ConnectionState> ConnectionStateChange;
+
+    private void Awake()
+    {
+        UpdateConnectionState(ConnectionState.Disconnected);
     }
 
-    private async System.Threading.Tasks.Task<bool> ConnectToServer()
+    private void UpdateConnectionState(ConnectionState state)
+    {
+        _connectionState = state;
+        ConnectionStateChange?.Invoke(state);
+    }
+
+    public static ConnectionState GetConnectionState()
+    {
+        return _connectionState;
+    }
+
+    private async void Start()
+    {
+        try
+        {
+            await ConnectToServer();
+        }
+        catch (Exception e)
+        {
+            if (_webSocket != null)
+            {
+                await _webSocket.Close();
+            }
+            UpdateConnectionState(ConnectionState.Disconnected);
+            // TODO: Handle ConnectToServer catch better.
+            Debug.LogError($"There was a problem connecting to the server: {e.Message}");
+        }
+    }
+
+    private async Task<bool> ConnectToServer()
     {
         Debug.Log("Attempting WebSocket connection...");
         
-        var connectedTcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
+        var connectedTcs = new TaskCompletionSource<bool>();
 
-        if (webSocket != null)
+        if (_webSocket != null)
         {
             Debug.Log("Closing existing WebSocket...");
-            await webSocket.Close();
-            webSocket.OnOpen -= OnOpenHandler;
-            webSocket.OnMessage -= RouteMessage;
-            webSocket.OnError -= OnError;
-            webSocket.OnClose -= HandleCloseConnection;
-            webSocket = null;
+            await _webSocket.Close();
+            _webSocket.OnOpen -= OnOpenHandler;
+            _webSocket.OnMessage -= RouteMessage;
+            _webSocket.OnError -= OnError;
+            _webSocket.OnClose -= HandleCloseConnection;
+            _webSocket = null;
         }
 
         var url = $"ws://localhost:3000?connectionId={SessionContext.ConnectionId}";
         Debug.Log($"Connecting to: {url}");
 
-        webSocket = new WebSocket(url);
+        _webSocket = new WebSocket(url);
 
         void OnOpenHandler()
         {
             Debug.Log("WebSocket connection established");
-            webSocket.OnOpen -= OnOpenHandler; // clean up
+            _webSocket.OnOpen -= OnOpenHandler; // clean up
             connectedTcs.TrySetResult(true);
         }
 
-        webSocket.OnOpen += OnOpenHandler;
-        webSocket.OnMessage += RouteMessage;
-        webSocket.OnError += OnError;
-        webSocket.OnClose += HandleCloseConnection;
+        _webSocket.OnOpen += OnOpenHandler;
+        _webSocket.OnMessage += RouteMessage;
+        _webSocket.OnError += OnError;
+        _webSocket.OnClose += HandleCloseConnection;
 
-        webSocket.Connect();
+        await _webSocket.Connect();
 
         // Wait for OnOpen or timeout
-        var completedTask = await System.Threading.Tasks.Task.WhenAny(connectedTcs.Task, System.Threading.Tasks.Task.Delay(5000));
+        var completedTask = await Task.WhenAny(connectedTcs.Task, Task.Delay(5000));
         if (completedTask == connectedTcs.Task && connectedTcs.Task.Result)
         {
+            UpdateConnectionState(ConnectionState.Connected);
             return true;
         }
 
@@ -62,19 +104,14 @@ public class WebsocketManager: Manager
         return false;
     }
 
-    private void OnOpen()
-    {
-        Debug.Log("Connection open!");
-    }
-
-    private void OnError(string error)
+    private static void OnError(string error)
     {
         Debug.Log("Error: " + error);
     }
 
-    public async System.Threading.Tasks.Task<bool> SendWsMessage<T>(T payload)
+    public async Task<bool> SendWsMessage<T>(T payload)
     {
-        if (webSocket == null || webSocket.State != WebSocketState.Open)
+        if (_webSocket == null || _webSocket.State != WebSocketState.Open)
         {
             Debug.LogWarning("WebSocket not ready to send message.");
             return false;
@@ -83,7 +120,7 @@ public class WebsocketManager: Manager
         try
         {
             string json = JsonUtility.ToJson(payload);
-            await webSocket.SendText(json);
+            await _webSocket.SendText(json);
             return true;
         }
         catch (Exception e)
@@ -95,32 +132,38 @@ public class WebsocketManager: Manager
     
     private void Update()
     {
-        if (webSocket != null)
+        if (_webSocket != null)
         {
-            webSocket.DispatchMessageQueue();
+            _webSocket.DispatchMessageQueue();
         }
     }
 
     private void RouteMessage(byte[] bytes)
     {
-        _router.RouteMessage(bytes);
+        Router.RouteMessage(bytes);
     }
 
     private async void HandleCloseConnection(WebSocketCloseCode closeCode)
     {
-        if (closeCode != WebSocketCloseCode.Normal)
+        try
         {
-            if (_isHandlingReconnect) return;
+            if (closeCode == WebSocketCloseCode.Normal || _isHandlingReconnect) return;
+            
             _isHandlingReconnect = true;
+            UpdateConnectionState(ConnectionState.Reconnecting);
             Debug.LogError("Connection broken.");
+            
             var retryCount = 0;
             bool connected = false;
-            while (retryCount < _maxRetries && !connected)
+            
+            while (retryCount < maxRetries && !connected)
             {
                 retryCount++;
                 Debug.Log($"Reconnection attempt: {retryCount}");
                 connected = await ConnectToServer();
+                await Task.Delay(retryCount * 1000); // Backoff delay
             }
+
             if (connected)
             {
                 Debug.Log("Reconnected to server.");
@@ -128,8 +171,28 @@ public class WebsocketManager: Manager
             else
             {
                 Debug.LogError("Failed to reconnect after max attempts.");
+                UpdateConnectionState(ConnectionState.Disconnected);
             }
+
             _isHandlingReconnect = false;
+        }
+        catch (Exception e)
+        {
+            if (_webSocket != null)
+            {
+                await _webSocket.Close();
+            }
+            UpdateConnectionState(ConnectionState.Disconnected);
+            Debug.LogError($"There was a problem reconnecting to the server: {e.Message}");
+        }
+        
+    }
+    
+    private async void OnApplicationQuit()
+    {
+        if (_webSocket != null)
+        {
+            await _webSocket.Close();
         }
     }
 }
