@@ -12,9 +12,9 @@ public enum ConnectionState
 }
 
 public class WebsocketManager: Manager
-{`
+{
     private static WebSocket _webSocket;
-    [SerializeField] private int maxRetries = 5;
+    private const int MaxRetries = 5;
     private static bool _isHandlingReconnect = false;
 
     private static ConnectionState _connectionState = ConnectionState.Disconnected;
@@ -27,7 +27,7 @@ public class WebsocketManager: Manager
         UpdateConnectionState(ConnectionState.Disconnected);
     }
 
-    private void UpdateConnectionState(ConnectionState state)
+    private static void UpdateConnectionState(ConnectionState state)
     {
         _connectionState = state;
         ConnectionStateChange?.Invoke(state);
@@ -38,7 +38,7 @@ public class WebsocketManager: Manager
         return _connectionState;
     }
 
-    private async void Start()
+    public async void ConnectToWebSocketServer()
     {
         try
         {
@@ -56,7 +56,7 @@ public class WebsocketManager: Manager
         }
     }
 
-    private async Task<bool> ConnectToServer()
+    private static async Task<bool> ConnectToServer()
     {
         Debug.Log("Attempting WebSocket connection...");
         
@@ -138,12 +138,12 @@ public class WebsocketManager: Manager
         }
     }
 
-    private void RouteMessage(byte[] bytes)
+    private static void RouteMessage(byte[] bytes)
     {
         Router.RouteMessage(bytes);
     }
 
-    private async void HandleCloseConnection(WebSocketCloseCode closeCode)
+    private static async void HandleCloseConnection(WebSocketCloseCode closeCode)
     {
         try
         {
@@ -156,7 +156,7 @@ public class WebsocketManager: Manager
             var retryCount = 0;
             bool connected = false;
             
-            while (retryCount < maxRetries && !connected)
+            while (retryCount < MaxRetries && !connected)
             {
                 retryCount++;
                 Debug.Log($"Reconnection attempt: {retryCount}");

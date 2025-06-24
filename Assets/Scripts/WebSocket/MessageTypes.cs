@@ -3,7 +3,7 @@ public class BaseMessage
     public string type;
 }
 
-public class ConnectMessage
+public class ConnectionMessage
 {
     public string connectionId;
 }
