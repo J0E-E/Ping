@@ -18,20 +18,32 @@ public class WSMessageRoutingManager : Manager
     // ScriptableObject to facilitate modular configuration.
     [SerializeField] private WSMessageRoutingConfig routingConfig;
 
-    public void RegisterHandlerScript(string scriptName, MonoBehaviour instance)
-    {
-        _handlerScripts[scriptName] = instance;
-        Debug.Log($"WSMessageRoutingManager - Registered: {scriptName} ");
-    }
-
     public void InitializeHandlers()
     {
         foreach (var entry in routingConfig.entries)
         {
             // scriptName and methodName must be defined.
             if (entry.scriptName == null || string.IsNullOrEmpty(entry.methodName)) continue;
-            
-            if (!_handlerScripts.TryGetValue(entry.scriptName, out var script)) continue;
+
+            if (!_handlerScripts.TryGetValue(entry.scriptName, out var script))
+            {
+                Type scriptType = Type.GetType(entry.scriptName);
+                if (scriptType == null)
+                {
+                    Debug.LogWarning($"Script type '{entry.scriptName}' not found.");
+                    continue;
+                }
+                
+                MonoBehaviour foundScript = FindFirstObjectByType(scriptType) as MonoBehaviour;
+                if (foundScript == null)
+                {
+                    Debug.LogWarning($"Instance of '{entry.scriptName}' not found in scene.");
+                    continue;
+                }
+
+                _handlerScripts[entry.scriptName] = foundScript;
+                script = foundScript;
+            }
 
             // target inherits from MonoBehavior, methodName should match a method in that script.
             MethodInfo method = script.GetType().GetMethod(entry.methodName,

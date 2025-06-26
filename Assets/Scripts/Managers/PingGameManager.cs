@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class PingGameManager : GameManager
@@ -9,11 +10,20 @@ public class PingGameManager : GameManager
     {
         base.Awake();
         
-        _wsMessageRoutingManager.RegisterHandlerScript("GameHandler", GetComponent<GameHandler>());
-        
         _wsMessageRoutingManager.InitializeHandlers();
         
-        _websocketManager.ConnectToWebSocketServer();
+        _websocketManager.ConnectWebSocket();
     }
 
+    protected override void RegisterSelf()
+    {
+        ManagerLocator.Register<PingGameManager>(this);
+    }
+
+    public async Task<bool> EnterLobby(string userName)
+    {
+        LobbyMessage lobbyMessage = new LobbyMessage(userName, "joining");
+        
+        return await _websocketManager.SendMessage(lobbyMessage);
+    }
 }

@@ -12,7 +12,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "10f755f81acf02284faa9ae55d6fc1e5faea9921"
+      "hash": "14549896c66a7652284478137beacd412541c3d1"
     },
     "com.unity.2d.animation": {
       "version": "10.2.0",
@@ -241,6 +241,13 @@
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
       "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

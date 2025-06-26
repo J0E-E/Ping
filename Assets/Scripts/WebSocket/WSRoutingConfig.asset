@@ -16,3 +16,6 @@ MonoBehaviour:
   - messageType: connection
     scriptName: GameHandler
     methodName: OnConnection
+  - messageType: lobby
+    scriptName: LobbyHandler
+    methodName: OnLobby
