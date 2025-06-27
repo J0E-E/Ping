@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class LobbyHandler : MonoBehaviour
@@ -8,7 +9,7 @@ public class LobbyHandler : MonoBehaviour
     
     public void OnLobby(string json)
     {
-        var message = JsonUtility.FromJson<LobbyMessage>(json);
+        var message = JsonConvert.DeserializeObject<LobbyMessage>(json);
         switch (message.action)
         {
             case "logged-in":
