@@ -19,3 +19,6 @@ MonoBehaviour:
   - messageType: lobby
     scriptName: LobbyHandler
     methodName: OnLobby
+  - messageType: match
+    scriptName: MatchHandler
+    methodName: OnMatch

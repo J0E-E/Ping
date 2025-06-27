@@ -43,24 +43,43 @@ public class MainMenuUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         
+        if (players == null || players.Count == 0)
+        {
+            Debug.Log("No players in the lobby.");
+            return;
+        }
+        
+        Debug.Log($"Updating lobby with {players.Count} players.");
+        
         foreach (var player in players)
         {
             GameObject playerEntry = Instantiate(_playerPrefab, _lobbyPlayers.transform);
             
+            // Find the PlayerName and PlayerRating components
             var playerName = playerEntry.transform.Find("PlayerName")?.GetComponent<TextMeshProUGUI>();
             var playerRating = playerEntry.transform.Find("PlayerRating")?.GetComponent<TextMeshProUGUI>();
-            var backgroundImage = playerEntry.transform.Find("Image")?.GetComponent<Image>();
+            LobbyPlayer lobbyPlayer = playerEntry.GetComponent<LobbyPlayer>();
+            var button = playerEntry.GetComponent<Button>();
             
             if (playerName != null && playerRating != null)
             {
+                // Set player name and rating
                 playerName.text = player.userName;
                 playerRating.text = player.rating;
-                
-                if (backgroundImage != null && player.playerId == SessionContext.PlayerData.playerId)
+                lobbyPlayer.PlayerData = player;
+
+                // Disable button for self
+                if (player.playerId == SessionContext.PlayerData.playerId)
                 {
-                    backgroundImage.color = Color.aquamarine;
+                    button.interactable = false;
                 }
             }
         }
+    }
+
+    public void RequestMatch()
+    {
+        // This method can be used to request a match with another player
+        Debug.Log("Requesting match...");
     }
 }
