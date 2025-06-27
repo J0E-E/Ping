@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameHandler : MonoBehaviour
 {
-    public void OnConnection(string json)
+    public void OnConnectionMessage(string json)
     { 
         var message = JsonUtility.FromJson<BaseMessage>(json);
         Debug.Log("GameHandler - ConnectionId: " + message.connectionId);

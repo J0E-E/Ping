@@ -4,7 +4,7 @@ using UnityEngine;
 public class MatchHandler : MonoBehaviour
 {
     private MatchManager _matchManager => ManagerLocator.Get<MatchManager>();
-    public void OnMatch(string json)
+    public void OnMatchMessage(string json)
     {
         var message = JsonUtility.FromJson<MatchMessage>(json);
         Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
