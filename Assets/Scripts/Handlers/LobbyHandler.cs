@@ -7,7 +7,7 @@ public class LobbyHandler : MonoBehaviour
 {
     public static event Action<List<Player>> OnUpdateLobby;
     
-    public void OnLobby(string json)
+    public void OnLobbyMessage(string json)
     {
         var message = JsonConvert.DeserializeObject<LobbyMessage>(json);
         switch (message.action)

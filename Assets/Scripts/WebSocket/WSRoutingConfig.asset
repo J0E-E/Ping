@@ -15,10 +15,10 @@ MonoBehaviour:
   entries:
   - messageType: connection
     scriptName: GameHandler
-    methodName: OnConnection
+    methodName: OnConnectionMessage
   - messageType: lobby
     scriptName: LobbyHandler
-    methodName: OnLobby
+    methodName: OnLobbyMessage
   - messageType: match
     scriptName: MatchHandler
-    methodName: OnMatch
+    methodName: OnMatchMessage
