@@ -4,7 +4,7 @@ public class MatchHandler : MonoBehaviour
 {
     public void OnMatch(string json)
     {
-        var message = JsonUtility.FromJson<MatchMessage>(json);
+        var message = JsonUtility.FromJson<BaseMessage>(json);
         Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
 
         switch (message.action)
