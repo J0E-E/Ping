@@ -16,17 +16,24 @@ public class MatchManager : Manager
         LobbyPlayer.OnPlayerButtonClicked -= HandlePlayerButtonClicked;
     }
     
-    private void HandlePlayerButtonClicked(Player opponent)
+    private async void HandlePlayerButtonClicked(Player opponent)
     {
-        Debug.Log($"MatchManager: Player {opponent.userName} clicked");
-        // request matchmaking for the selected player
-        RequestMatchmaking(opponent);
+        try
+        {
+            Debug.Log($"MatchManager: Player {opponent.userName} clicked");
+            // request matchmaking for the selected player
+            await RequestMatchmaking(opponent);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Something went wrong requesting matchmaking: {ex.Message}");
+        }
     }
     
     private async Task<bool> RequestMatchmaking(Player opponent)
     {
         Debug.Log($"Requesting matchmaking for player: {opponent.userName}");
-        MatchMessage matchMessage = new MatchMessage("request-match", SessionContext.PlayerData, opponent);
+        MatchMessage matchMessage = new RequestMatchMessage(opponent);
         return await _websocketManager.SendMessage(matchMessage);
     }
 }
