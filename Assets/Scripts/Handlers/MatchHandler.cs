@@ -1,10 +1,12 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class MatchHandler : MonoBehaviour
 {
+    private MatchManager _matchManager => ManagerLocator.Get<MatchManager>();
     public void OnMatch(string json)
     {
-        var message = JsonUtility.FromJson<BaseMessage>(json);
+        var message = JsonUtility.FromJson<MatchMessage>(json);
         Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
 
         switch (message.action)
@@ -13,8 +15,15 @@ public class MatchHandler : MonoBehaviour
                 Debug.Log($"Match started.");
                 // Handle match start logic here
                 break;
-            case "match-ended":
+            case "update-match-state":
+                Debug.Log($"Updating match state.");
+                var stateUpdate = JsonConvert.DeserializeObject<MatchStateUpdate>(json);
+                _matchManager.UpdateMatchState(stateUpdate);
+                break;
+            case "match-over":
                 Debug.Log($"Match ended.");
+                var matchOver = JsonConvert.DeserializeObject<MatchOver>(json);
+                _matchManager.GameOver(matchOver.IsWinner);
                 // Handle match end logic here
                 break;
             default:
