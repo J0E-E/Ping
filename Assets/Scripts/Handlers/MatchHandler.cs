@@ -11,9 +11,10 @@ public class MatchHandler : MonoBehaviour
 
         switch (message.action)
         {
-            case "match-started":
-                Debug.Log($"Match started.");
-                // Handle match start logic here
+            case "match-initialized":
+                Debug.Log($"Initializing Match.");
+                var matchInitializedMessage = JsonConvert.DeserializeObject<MatchInitialized>(json);
+                _matchManager.InitializeMatch(matchInitializedMessage);
                 break;
             case "update-match-state":
                 Debug.Log($"Updating match state.");
@@ -23,7 +24,7 @@ public class MatchHandler : MonoBehaviour
             case "match-over":
                 Debug.Log($"Match ended.");
                 var matchOver = JsonConvert.DeserializeObject<MatchOver>(json);
-                _matchManager.GameOver(matchOver.IsWinner);
+                _matchManager.GameOver(matchOver.isWinner);
                 // Handle match end logic here
                 break;
             default:

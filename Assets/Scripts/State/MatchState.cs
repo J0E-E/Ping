@@ -39,6 +39,11 @@ public static class MatchState
     public static float TheirPaddlePosition =>
         MyPlayerType == PlayerType.Player ? OpponentPaddlePosition : PlayerPaddlePosition;
 
+    public static void SetPlayerType(PlayerType playerType)
+    {
+        MyPlayerType = playerType;
+    }
+
     public static void LogState()
     {
         var currentState =

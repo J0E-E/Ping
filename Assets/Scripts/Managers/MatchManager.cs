@@ -37,19 +37,26 @@ public class MatchManager : Manager
         return await _websocketManager.SendMessage(requestMatch);
     }
 
+    public void InitializeMatch(MatchInitialized initializedMatch)
+    {
+        var stateUpdate = initializedMatch.matchState;
+        MatchState.SetPlayerType(initializedMatch.playerType);
+        UpdateMatchState(stateUpdate);
+        Debug.Log($"Match Initialized.");
+    }
+
     public void UpdateMatchState(MatchStateUpdate stateUpdate)
     {
-        MatchState.MyPlayerType = stateUpdate.MyPlayerType;
-        MatchState.PlayerReady = stateUpdate.PlayerReady;
-        MatchState.OpponentReady = stateUpdate.OpponentReady;
-        MatchState.BallPosition = stateUpdate.BallPosition;
-        MatchState.BallVelocity = stateUpdate.BallVelocity;
-        MatchState.PlayerPaddlePosition = stateUpdate.PlayerPaddlePosition;
-        MatchState.OpponentPaddlePosition = stateUpdate.OpponentPaddlePosition;
-        MatchState.PlayerScore = stateUpdate.PlayerScore;
-        MatchState.OpponentScore = stateUpdate.OpponentScore;
-        MatchState.WinningScore = stateUpdate.WinningScore;
-        MatchState.CurrentPhase = stateUpdate.CurrentPhase;
+        MatchState.PlayerReady = stateUpdate.playerReady;
+        MatchState.OpponentReady = stateUpdate.opponentReady;
+        MatchState.BallPosition = stateUpdate.ballPosition;
+        MatchState.BallVelocity = stateUpdate.ballVelocity;
+        MatchState.PlayerPaddlePosition = stateUpdate.playerPaddlePosition;
+        MatchState.OpponentPaddlePosition = stateUpdate.opponentPaddlePosition;
+        MatchState.PlayerScore = stateUpdate.playerScore;
+        MatchState.OpponentScore = stateUpdate.opponentScore;
+        MatchState.WinningScore = stateUpdate.winningScore;
+        MatchState.CurrentPhase = stateUpdate.currentPhase;
         MatchState.LogState();
     }
 

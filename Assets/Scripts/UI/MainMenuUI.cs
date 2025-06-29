@@ -65,7 +65,7 @@ public class MainMenuUI : MonoBehaviour
             {
                 // Set player name and rating
                 playerName.text = player.userName;
-                playerRating.text = player.rating;
+                playerRating.text = $"{player.wins}/{player.losses}";
                 lobbyPlayer.PlayerData = player;
 
                 // Disable button for self
