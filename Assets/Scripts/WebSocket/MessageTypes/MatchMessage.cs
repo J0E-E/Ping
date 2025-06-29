@@ -12,42 +12,55 @@ public class MatchMessage: BaseMessage
     }
 }
 
+[Serializable]
 public class RequestMatch : MatchMessage
 {
-    public string OpponentId;
+    public string opponentId;
     
     public RequestMatch(Player opponent)
     {
         this.action = "request-match";
-        this.OpponentId = opponent.playerId;
+        this.opponentId = opponent.playerId;
     }
 }
 
+[Serializable]
 public class UpdatePaddlePosition : MatchMessage
 {
-    public Vector2 PaddlePosition;
+    public Vector2 paddlePosition;
     public UpdatePaddlePosition(Vector2 paddlePosition)
     {
-        this.PaddlePosition = paddlePosition;
+        this.paddlePosition = paddlePosition;
     }
 }
 
+[Serializable]
 public class MatchStateUpdate : MatchMessage
 {
-    public PlayerType MyPlayerType;
-    public bool PlayerReady;
-    public bool OpponentReady;
-    public Vector2 BallPosition;
-    public Vector2 BallVelocity;
-    public int PlayerPaddlePosition;
-    public int OpponentPaddlePosition;
-    public int PlayerScore;
-    public int OpponentScore;
-    public int WinningScore;
-    public GamePhase CurrentPhase;
+    public PlayerType myPlayerType;
+    public bool playerReady;
+    public bool opponentReady;
+    public Vector2 ballPosition;
+    public Vector2 ballVelocity;
+    public int playerPaddlePosition;
+    public int opponentPaddlePosition;
+    public int playerScore;
+    public int opponentScore;
+    public int winningScore;
+    public GamePhase currentPhase;
 }
 
+
+[Serializable]
 public class MatchOver : MatchMessage
 {
-    public bool IsWinner;
+    public bool isWinner;
+}
+
+[Serializable]
+public class MatchInitialized : MatchMessage
+{
+    public string matchId;
+    public PlayerType playerType;
+    public MatchStateUpdate matchState;
 }

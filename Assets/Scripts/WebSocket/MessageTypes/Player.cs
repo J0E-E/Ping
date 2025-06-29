@@ -7,5 +7,6 @@ public class Player
     public string playerId;
     public string userName;
     public string playerLocation;
-    public string rating;
+    public int wins;
+    public int losses;
 }
