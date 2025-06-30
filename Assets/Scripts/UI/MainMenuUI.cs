@@ -10,9 +10,11 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button _enterLobbyButton;
     [SerializeField] private GridLayoutGroup _lobbyPlayers;
     [SerializeField] private GameObject _playerPrefab;
-
+    [SerializeField] private GameObject playerUI;
+    [SerializeField] private GameObject lobbyUI;
+    
     private PingGameManager _pingGameManager => ManagerLocator.Get<PingGameManager>();
-
+    
     private void OnEnable()
     {
         LobbyHandler.OnUpdateLobby += UpdateLobby;
@@ -33,11 +35,18 @@ public class MainMenuUI : MonoBehaviour
     {
         Debug.Log($"{_playerName} Entering Lobby.");
         bool loginSuccess = await _pingGameManager.EnterLobby(_playerName);
+        if (loginSuccess)
+        {
+            playerUI.SetActive(false);
+            lobbyUI.SetActive(true);
+        }
         Debug.Log($"Login success: {loginSuccess}");
     }
 
     private void UpdateLobby(List<Player> players)
     {
+        if (!lobbyUI.activeSelf) return;
+        
         foreach (Transform child in _lobbyPlayers.transform)
         {
             Destroy(child.gameObject);
