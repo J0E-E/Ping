@@ -29,6 +29,7 @@ public static class MatchState
     public static int WinningScore = 10;
 
     public static GamePhase CurrentPhase = GamePhase.WaitingForPlayers;
+    public static string MatchId;
 
     public static int MyScore => MyPlayerType == PlayerType.Player ? PlayerScore : OpponentScore;
     public static int TheirScore => MyPlayerType == PlayerType.Player ? OpponentScore : PlayerScore;
@@ -39,18 +40,13 @@ public static class MatchState
     public static float TheirPaddlePosition =>
         MyPlayerType == PlayerType.Player ? OpponentPaddlePosition : PlayerPaddlePosition;
 
-    public static void SetPlayerType(PlayerType playerType)
-    {
-        MyPlayerType = playerType;
-    }
-
     public static void LogState()
     {
         var currentState =
             $"MatchState: Phase={CurrentPhase}, PlayerReady={PlayerReady}, OpponentReady={OpponentReady}, " +
             $"BallPosition={BallPosition}, BallVelocity={BallVelocity}, PlayerPaddlePOS={PlayerPaddlePosition}, " +
             $"OpponentPaddlePOS={OpponentPaddlePosition}, PlayerScore={PlayerScore}, OpponentScore={OpponentScore}, " +
-            $"WinningScore={WinningScore}, PlayerType={MyPlayerType}";
+            $"WinningScore={WinningScore}, PlayerType={MyPlayerType}, MatchId={MatchId}";
         Debug.Log(currentState);
     }
 }

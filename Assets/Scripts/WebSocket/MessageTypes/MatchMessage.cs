@@ -1,6 +1,4 @@
 using System;
-using Newtonsoft.Json;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -25,6 +23,18 @@ public class RequestMatch : MatchMessage
 }
 
 [Serializable]
+public class AcceptMatch : MatchMessage
+{
+    public string playerId;
+
+    public AcceptMatch(Player player)
+    {
+        this.action = "accept-match";
+        this.playerId = player.playerId;
+    }
+}
+
+[Serializable]
 public class UpdatePaddlePosition : MatchMessage
 {
     public Vector2 paddlePosition;
@@ -35,7 +45,7 @@ public class UpdatePaddlePosition : MatchMessage
 }
 
 [Serializable]
-public class MatchStateUpdate : MatchMessage
+public class MatchStateMessage
 {
     public PlayerType myPlayerType;
     public bool playerReady;
@@ -50,6 +60,12 @@ public class MatchStateUpdate : MatchMessage
     public GamePhase currentPhase;
 }
 
+[Serializable]
+public class MatchStateUpdate : MatchMessage
+{
+    public MatchStateMessage matchState;
+}
+
 
 [Serializable]
 public class MatchOver : MatchMessage
@@ -62,5 +78,26 @@ public class MatchInitialized : MatchMessage
 {
     public string matchId;
     public PlayerType playerType;
-    public MatchStateUpdate matchState;
+    public MatchStateMessage matchState;
+}
+
+[Serializable]
+public class MatchRequested : MatchMessage
+{
+    public Player player;
+}
+
+[Serializable]
+public class ReadyToStart : MatchMessage
+{
+    public bool isReady = true;
+    public string matchId;
+    public string playerType;
+
+    public ReadyToStart(string matchId, PlayerType playerType)
+    {
+        this.action = "ready-to-play";
+        this.matchId = matchId;
+        this.playerType = playerType.ToString();
+    }
 }

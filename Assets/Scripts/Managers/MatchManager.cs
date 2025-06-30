@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MatchManager : Manager
 {
@@ -30,6 +32,25 @@ public class MatchManager : Manager
         }
     }
 
+    public void MatchRequested(Player player)
+    {
+        
+        var dialog = FindFirstObjectByType<RequestedDialog>(FindObjectsInactive.Include);
+        if (dialog == null)
+        {
+            Debug.LogError("RequestedDialog object not found.");
+        }
+        dialog.MatchRequested(player);
+    }
+
+    public async Task<bool> AcceptMatch(Player player)
+    {
+        Debug.Log($"Accepting match with user: {player.userName}");
+        AcceptMatch acceptMatch = new AcceptMatch(player);
+        return await _websocketManager.SendMessage(acceptMatch);
+
+    }
+
     private async Task<bool> RequestMatchmaking(Player opponent)
     {
         Debug.Log($"Requesting matchmaking for player: {opponent.userName}");
@@ -40,12 +61,21 @@ public class MatchManager : Manager
     public void InitializeMatch(MatchInitialized initializedMatch)
     {
         var stateUpdate = initializedMatch.matchState;
-        MatchState.SetPlayerType(initializedMatch.playerType);
+        MatchState.MyPlayerType = initializedMatch.playerType;
+        MatchState.MatchId = initializedMatch.matchId;
         UpdateMatchState(stateUpdate);
-        Debug.Log($"Match Initialized.");
+        Debug.Log($"Initializing Match. MatchId: {MatchState.MatchId}");
+
+        SceneManager.LoadScene("Match");
     }
 
-    public void UpdateMatchState(MatchStateUpdate stateUpdate)
+    public async Task<bool> ReadyToStartMatch()
+    {
+        ReadyToStart readyMessage = new ReadyToStart(MatchState.MatchId, MatchState.MyPlayerType);
+        return await _websocketManager.SendMessage(readyMessage);
+    }
+
+    public void UpdateMatchState(MatchStateMessage stateUpdate)
     {
         MatchState.PlayerReady = stateUpdate.playerReady;
         MatchState.OpponentReady = stateUpdate.opponentReady;

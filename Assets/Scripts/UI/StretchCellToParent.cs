@@ -15,11 +15,11 @@ public class StretchCellToParent : MonoBehaviour
 
     private void Start()
     {
-        float totalWidth = _rectTransform.rect.width;
-        float padding = _grid.padding.left + _grid.padding.right;
-        float spacing = _grid.spacing.x * (_grid.constraintCount - 1);
-        float cellWidth = (totalWidth - padding - spacing) / _grid.constraintCount;
-
-        _grid.cellSize = new Vector2(cellWidth, _grid.cellSize.y);
+        // float totalWidth = _rectTransform.rect.width;
+        // float padding = _grid.padding.left + _grid.padding.right;
+        // float spacing = _grid.spacing.x * (_grid.constraintCount - 1);
+        // float cellWidth = (totalWidth - padding - spacing) / _grid.constraintCount;
+        //
+        // _grid.cellSize = new Vector2(cellWidth, _grid.cellSize.y);
     }
 }
