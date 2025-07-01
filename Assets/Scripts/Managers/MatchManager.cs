@@ -8,6 +8,8 @@ public class MatchManager : Manager
 {
     private WebsocketManager _websocketManager => ManagerLocator.Get<WebsocketManager>();
 
+    public static event Action MatchStateUpdated;
+
     private void OnEnable()
     {
         LobbyPlayer.OnPlayerButtonClicked += HandlePlayerButtonClicked;
@@ -88,6 +90,7 @@ public class MatchManager : Manager
         MatchState.WinningScore = stateUpdate.winningScore;
         MatchState.CurrentPhase = stateUpdate.currentPhase;
         MatchState.LogState();
+        MatchStateUpdated?.Invoke();
     }
 
     public void GameOver(bool isWinner)

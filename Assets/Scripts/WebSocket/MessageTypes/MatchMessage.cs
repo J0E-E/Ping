@@ -35,16 +35,6 @@ public class AcceptMatch : MatchMessage
 }
 
 [Serializable]
-public class UpdatePaddlePosition : MatchMessage
-{
-    public Vector2 paddlePosition;
-    public UpdatePaddlePosition(Vector2 paddlePosition)
-    {
-        this.paddlePosition = paddlePosition;
-    }
-}
-
-[Serializable]
 public class MatchStateMessage
 {
     public PlayerType myPlayerType;
@@ -52,8 +42,8 @@ public class MatchStateMessage
     public bool opponentReady;
     public Vector2 ballPosition;
     public Vector2 ballVelocity;
-    public int playerPaddlePosition;
-    public int opponentPaddlePosition;
+    public float playerPaddlePosition;
+    public float opponentPaddlePosition;
     public int playerScore;
     public int opponentScore;
     public int winningScore;
@@ -99,5 +89,19 @@ public class ReadyToStart : MatchMessage
         this.action = "ready-to-play";
         this.matchId = matchId;
         this.playerType = playerType.ToString();
+    }
+}
+
+[Serializable]
+public class MovePaddle : MatchMessage
+{
+    public float xMovement;
+    public string matchId;
+
+    public MovePaddle(string matchId, float xMovement)
+    {
+        this.action = "move-paddle";
+        this.matchId = matchId;
+        this.xMovement = xMovement;
     }
 }
