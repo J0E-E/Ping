@@ -18,6 +18,7 @@ public enum GamePhase
 public static class MatchState
 {
     public static PlayerType MyPlayerType;
+    public static PlayerType BallPossession = PlayerType.Player;
     public static bool PlayerReady = false;
     public static bool OpponentReady = false;
     public static Vector2 BallPosition = Vector2.zero;
@@ -27,8 +28,10 @@ public static class MatchState
     public static int PlayerScore = 0;
     public static int OpponentScore = 0;
     public static int WinningScore = 10;
+    public static bool IsBallInPlay = false; 
 
     public static GamePhase CurrentPhase = GamePhase.WaitingForPlayers;
+    public static string MatchId;
 
     public static int MyScore => MyPlayerType == PlayerType.Player ? PlayerScore : OpponentScore;
     public static int TheirScore => MyPlayerType == PlayerType.Player ? OpponentScore : PlayerScore;
@@ -39,18 +42,13 @@ public static class MatchState
     public static float TheirPaddlePosition =>
         MyPlayerType == PlayerType.Player ? OpponentPaddlePosition : PlayerPaddlePosition;
 
-    public static void SetPlayerType(PlayerType playerType)
-    {
-        MyPlayerType = playerType;
-    }
-
     public static void LogState()
     {
         var currentState =
             $"MatchState: Phase={CurrentPhase}, PlayerReady={PlayerReady}, OpponentReady={OpponentReady}, " +
             $"BallPosition={BallPosition}, BallVelocity={BallVelocity}, PlayerPaddlePOS={PlayerPaddlePosition}, " +
             $"OpponentPaddlePOS={OpponentPaddlePosition}, PlayerScore={PlayerScore}, OpponentScore={OpponentScore}, " +
-            $"WinningScore={WinningScore}, PlayerType={MyPlayerType}";
+            $"WinningScore={WinningScore}, PlayerType={MyPlayerType}, MatchId={MatchId}";
         Debug.Log(currentState);
     }
 }

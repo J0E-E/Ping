@@ -6,19 +6,25 @@ public class MatchHandler : MonoBehaviour
     private MatchManager _matchManager => ManagerLocator.Get<MatchManager>();
     public void OnMatchMessage(string json)
     {
-        var message = JsonUtility.FromJson<MatchMessage>(json);
+        var message = JsonConvert.DeserializeObject<MatchMessage>(json);
         Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
 
         switch (message.action)
         {
-            case "match-initialized":
+            case "match-requested":
+                var matchRequestedMessage = JsonConvert.DeserializeObject<MatchRequested>(json);
+                _matchManager.MatchRequested(matchRequestedMessage.player);
+                break;
+            case "match-accepted":
                 Debug.Log($"Initializing Match.");
                 var matchInitializedMessage = JsonConvert.DeserializeObject<MatchInitialized>(json);
                 _matchManager.InitializeMatch(matchInitializedMessage);
                 break;
             case "update-match-state":
                 Debug.Log($"Updating match state.");
-                var stateUpdate = JsonConvert.DeserializeObject<MatchStateUpdate>(json);
+                Debug.Log(json);
+                var stateUpdateMessage = JsonConvert.DeserializeObject<MatchStateUpdate>(json);
+                var stateUpdate = stateUpdateMessage.matchState;
                 _matchManager.UpdateMatchState(stateUpdate);
                 break;
             case "match-over":

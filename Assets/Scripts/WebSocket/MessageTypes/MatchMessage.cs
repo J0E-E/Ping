@@ -1,6 +1,4 @@
 using System;
-using Newtonsoft.Json;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -25,29 +23,39 @@ public class RequestMatch : MatchMessage
 }
 
 [Serializable]
-public class UpdatePaddlePosition : MatchMessage
+public class AcceptMatch : MatchMessage
 {
-    public Vector2 paddlePosition;
-    public UpdatePaddlePosition(Vector2 paddlePosition)
+    public string playerId;
+
+    public AcceptMatch(Player player)
     {
-        this.paddlePosition = paddlePosition;
+        this.action = "accept-match";
+        this.playerId = player.playerId;
     }
+}
+
+[Serializable]
+public class MatchStateMessage
+{
+    public PlayerType myPlayerType;
+    public PlayerType ballPossession;
+    public bool playerReady;
+    public bool opponentReady;
+    public Vector2 ballPosition;
+    public Vector2 ballVelocity;
+    public float playerPaddlePosition;
+    public float opponentPaddlePosition;
+    public int playerScore;
+    public int opponentScore;
+    public int winningScore;
+    public GamePhase currentPhase;
+    public bool isBallInPlay;
 }
 
 [Serializable]
 public class MatchStateUpdate : MatchMessage
 {
-    public PlayerType myPlayerType;
-    public bool playerReady;
-    public bool opponentReady;
-    public Vector2 ballPosition;
-    public Vector2 ballVelocity;
-    public int playerPaddlePosition;
-    public int opponentPaddlePosition;
-    public int playerScore;
-    public int opponentScore;
-    public int winningScore;
-    public GamePhase currentPhase;
+    public MatchStateMessage matchState;
 }
 
 
@@ -62,5 +70,51 @@ public class MatchInitialized : MatchMessage
 {
     public string matchId;
     public PlayerType playerType;
-    public MatchStateUpdate matchState;
+    public MatchStateMessage matchState;
+}
+
+[Serializable]
+public class MatchRequested : MatchMessage
+{
+    public Player player;
+}
+
+[Serializable]
+public class ReadyToStart : MatchMessage
+{
+    public bool isReady = true;
+    public string matchId;
+    public string playerType;
+
+    public ReadyToStart(string matchId, PlayerType playerType)
+    {
+        this.action = "ready-to-play";
+        this.matchId = matchId;
+        this.playerType = playerType.ToString();
+    }
+}
+
+[Serializable]
+public class MovePaddle : MatchMessage
+{
+    public float xMovement;
+    public string matchId;
+
+    public MovePaddle(string matchId, float xMovement)
+    {
+        this.action = "move-paddle";
+        this.matchId = matchId;
+        this.xMovement = xMovement;
+    }
+}
+
+[Serializable]
+public class ReleaseBall : MatchMessage
+{
+    public string matchId;
+    public ReleaseBall()
+    {
+        this.action = "release-ball";
+        this.matchId = MatchState.MatchId;
+    }
 }
