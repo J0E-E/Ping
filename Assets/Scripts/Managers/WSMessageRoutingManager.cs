@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
 using UnityEngine;
 
 /// <summary>
@@ -68,7 +69,7 @@ public class WSMessageRoutingManager : Manager
     {
         // get the BaseMessage from the message. This helps understand which message Type it is for routing. 
         string message = System.Text.Encoding.UTF8.GetString(bytes);
-        var baseMessage = JsonUtility.FromJson<BaseMessage>(message);
+        var baseMessage = JsonConvert.DeserializeObject<BaseMessage>(message);
 
         // find the handler of that type and invoke the method for it. 
         if (_handlerActions.TryGetValue(baseMessage.type, out Action<string> handler))

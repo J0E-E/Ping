@@ -9,8 +9,10 @@ public class PingGameManager : GameManager
     private WSMessageRoutingManager _wsMessageRoutingManager => ManagerLocator.Get<WSMessageRoutingManager>();
 
     [SerializeField] private GameObject paddlePrefab;
+    [SerializeField] private GameObject ballPrefab;
     private GameObject _playerPaddle;
     private GameObject _opponentPaddle;
+    private GameObject _ball;
     private bool _inMatch;
     private int _playerTypeModifier = 0;
 
@@ -66,6 +68,15 @@ public class PingGameManager : GameManager
             LoadOpponentPaddle();
         }
 
+        if (_ball == null && MatchState.PlayerReady && MatchState.OpponentReady && MatchState.BallPosition != Vector2.zero)
+        {
+            LoadBall();
+        }
+        else if (_ball != null && new Vector2(_ball.transform.position.x, _ball.transform.position.x) != MatchState.BallPosition)
+        {
+            UpdateBallPosition();
+        }
+
         if (_playerPaddle != null )
         {
             _playerPaddle.transform.position =
@@ -90,11 +101,30 @@ public class PingGameManager : GameManager
         _opponentPaddle.transform.position = new Vector2(0, 45 * _playerTypeModifier);
     }
 
+    private void LoadBall()
+    {
+        _ball = Instantiate(ballPrefab);
+        _ball.transform.position = new Vector2(MatchState.BallPosition.x, MatchState.BallPosition.y * _playerTypeModifier);
+    }
+
+    private void UpdateBallPosition()
+    {
+        _ball.transform.position = new Vector2(MatchState.BallPosition.x * _playerTypeModifier, MatchState.BallPosition.y * _playerTypeModifier);
+    }
+
     private async void OnMove(InputValue inputValue)
     {
         if (!_inMatch) return;
-        MovePaddle movePaddle = new MovePaddle(MatchState.MatchId, inputValue.Get<Vector2>().x);
-        await _websocketManager.SendMessage(movePaddle);
+        MovePaddle movePaddleMessage = new MovePaddle(MatchState.MatchId, inputValue.Get<Vector2>().x);
+        await _websocketManager.SendMessage(movePaddleMessage);
+    }
+
+    private async void OnRelease(InputValue inputValue)
+    {
+        if (MatchState.BallPossession != MatchState.MyPlayerType || MatchState.IsBallInPlay) return;
+        ReleaseBall releaseBallMessage = new ReleaseBall();
+        await _websocketManager.SendMessage(releaseBallMessage);
+
     }
 }
 

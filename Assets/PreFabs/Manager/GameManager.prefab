@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paddlePrefab: {fileID: 2042319837172668846, guid: b53365e628c574c68af9defdc6218f99, type: 3}
+  ballPrefab: {fileID: 7447621343953676227, guid: 786aeb4f9379d4a0895d4220dc5bd7fa, type: 3}
 --- !u!114 &4171929133248770
 MonoBehaviour:
   m_ObjectHideFlags: 0

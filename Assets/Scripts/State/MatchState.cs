@@ -18,6 +18,7 @@ public enum GamePhase
 public static class MatchState
 {
     public static PlayerType MyPlayerType;
+    public static PlayerType BallPossession = PlayerType.Player;
     public static bool PlayerReady = false;
     public static bool OpponentReady = false;
     public static Vector2 BallPosition = Vector2.zero;
@@ -27,6 +28,7 @@ public static class MatchState
     public static int PlayerScore = 0;
     public static int OpponentScore = 0;
     public static int WinningScore = 10;
+    public static bool IsBallInPlay = false; 
 
     public static GamePhase CurrentPhase = GamePhase.WaitingForPlayers;
     public static string MatchId;
