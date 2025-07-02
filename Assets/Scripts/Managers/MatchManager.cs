@@ -89,6 +89,8 @@ public class MatchManager : Manager
         MatchState.OpponentScore = stateUpdate.opponentScore;
         MatchState.WinningScore = stateUpdate.winningScore;
         MatchState.CurrentPhase = stateUpdate.currentPhase;
+        MatchState.BallPossession = stateUpdate.ballPossession;
+        MatchState.IsBallInPlay = stateUpdate.isBallInPlay;
         MatchState.LogState();
         MatchStateUpdated?.Invoke();
     }

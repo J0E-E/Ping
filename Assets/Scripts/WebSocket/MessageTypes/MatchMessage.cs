@@ -38,6 +38,7 @@ public class AcceptMatch : MatchMessage
 public class MatchStateMessage
 {
     public PlayerType myPlayerType;
+    public PlayerType ballPossession;
     public bool playerReady;
     public bool opponentReady;
     public Vector2 ballPosition;
@@ -48,6 +49,7 @@ public class MatchStateMessage
     public int opponentScore;
     public int winningScore;
     public GamePhase currentPhase;
+    public bool isBallInPlay;
 }
 
 [Serializable]
@@ -103,5 +105,16 @@ public class MovePaddle : MatchMessage
         this.action = "move-paddle";
         this.matchId = matchId;
         this.xMovement = xMovement;
+    }
+}
+
+[Serializable]
+public class ReleaseBall : MatchMessage
+{
+    public string matchId;
+    public ReleaseBall()
+    {
+        this.action = "release-ball";
+        this.matchId = MatchState.MatchId;
     }
 }

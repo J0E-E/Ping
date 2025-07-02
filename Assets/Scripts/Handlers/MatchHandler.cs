@@ -6,7 +6,7 @@ public class MatchHandler : MonoBehaviour
     private MatchManager _matchManager => ManagerLocator.Get<MatchManager>();
     public void OnMatchMessage(string json)
     {
-        var message = JsonUtility.FromJson<MatchMessage>(json);
+        var message = JsonConvert.DeserializeObject<MatchMessage>(json);
         Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
 
         switch (message.action)
