@@ -7,7 +7,6 @@ public class MatchHandler : MonoBehaviour
     public void OnMatchMessage(string json)
     {
         var message = JsonConvert.DeserializeObject<MatchMessage>(json);
-        Debug.Log($"MatchHandler: Received match message with action '{message.action}'");
 
         switch (message.action)
         {
@@ -16,13 +15,10 @@ public class MatchHandler : MonoBehaviour
                 _matchManager.MatchRequested(matchRequestedMessage.player);
                 break;
             case "match-accepted":
-                Debug.Log($"Initializing Match.");
                 var matchInitializedMessage = JsonConvert.DeserializeObject<MatchInitialized>(json);
                 _matchManager.InitializeMatch(matchInitializedMessage);
                 break;
             case "update-match-state":
-                Debug.Log($"Updating match state.");
-                Debug.Log(json);
                 var stateUpdateMessage = JsonConvert.DeserializeObject<MatchStateUpdate>(json);
                 var stateUpdate = stateUpdateMessage.matchState;
                 _matchManager.UpdateMatchState(stateUpdate);

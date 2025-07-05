@@ -22,6 +22,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Touch",
+                    "type": "Value",
+                    "id": "0be4f7ad-3989-4ed6-8131-af74d9562267",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SwipeLeft",
+                    "type": "Value",
+                    "id": "4a73f3d2-6547-4b82-b3ef-4ac249964c4d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SwipeRight",
+                    "type": "Value",
+                    "id": "bd0f822d-029a-4c8e-8759-ef911a182eda",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Touch2",
+                    "type": "Value",
+                    "id": "a1dc8e90-ec48-436d-8108-6f919befb83f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -159,17 +195,6 @@
                 },
                 {
                     "name": "",
-                    "id": "0289fd4d-6da6-4935-ba47-2c36ebb7bbc2",
-                    "path": "<Touchscreen>/delta",
-                    "interactions": "",
-                    "processors": "NormalizeVector2",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "fd86b073-620d-4ac2-9c72-8799676cbcb2",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -181,12 +206,56 @@
                 },
                 {
                     "name": "",
-                    "id": "4495cd12-2919-48eb-aa2f-6db9409a7dd0",
+                    "id": "3baa943c-a980-4fa0-bc7f-7a99bf5f6254",
                     "path": "<Touchscreen>/primaryTouch/tap",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Release",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4cfc2b9b-dcee-46a9-aa8b-32bbbac34aa1",
+                    "path": "<Touchscreen>/primaryTouch/phase",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84604416-85ab-4871-9ac6-e49d4bd40b8b",
+                    "path": "<Touchscreen>/delta/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwipeLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ed3b00b2-3e51-44b9-9e85-f116b7d64fc7",
+                    "path": "<Touchscreen>/delta/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwipeRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c088d30d-1b66-4db8-805a-6587f92f342c",
+                    "path": "<Touchscreen>/touch1/phase",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

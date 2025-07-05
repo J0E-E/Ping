@@ -91,7 +91,6 @@ public class MatchManager : Manager
         MatchState.CurrentPhase = stateUpdate.currentPhase;
         MatchState.BallPossession = stateUpdate.ballPossession;
         MatchState.IsBallInPlay = stateUpdate.isBallInPlay;
-        MatchState.LogState();
         MatchStateUpdated?.Invoke();
     }
 
