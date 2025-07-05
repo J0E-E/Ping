@@ -42,13 +42,15 @@ public static class MatchState
     public static float TheirPaddlePosition =>
         MyPlayerType == PlayerType.Player ? OpponentPaddlePosition : PlayerPaddlePosition;
 
-    public static void LogState()
-    {
-        var currentState =
-            $"MatchState: Phase={CurrentPhase}, PlayerReady={PlayerReady}, OpponentReady={OpponentReady}, " +
-            $"BallPosition={BallPosition}, BallVelocity={BallVelocity}, PlayerPaddlePOS={PlayerPaddlePosition}, " +
-            $"OpponentPaddlePOS={OpponentPaddlePosition}, PlayerScore={PlayerScore}, OpponentScore={OpponentScore}, " +
-            $"WinningScore={WinningScore}, PlayerType={MyPlayerType}, MatchId={MatchId}";
-        Debug.Log(currentState);
-    }
+    public static bool PlayersReady => PlayerReady && OpponentReady;
+
+    // public static void LogState()
+    // {
+    //     var currentState =
+    //         $"MatchState: Phase={CurrentPhase}, PlayerReady={PlayerReady}, OpponentReady={OpponentReady}, " +
+    //         $"BallPosition={BallPosition}, BallVelocity={BallVelocity}, PlayerPaddlePOS={PlayerPaddlePosition}, " +
+    //         $"OpponentPaddlePOS={OpponentPaddlePosition}, PlayerScore={PlayerScore}, OpponentScore={OpponentScore}, " +
+    //         $"WinningScore={WinningScore}, PlayerType={MyPlayerType}, MatchId={MatchId}";
+    //     Debug.Log(currentState);
+    // }
 }
