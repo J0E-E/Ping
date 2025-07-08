@@ -23,11 +23,12 @@ public class MatchHandler : MonoBehaviour
                 var stateUpdate = stateUpdateMessage.matchState;
                 _matchManager.UpdateMatchState(stateUpdate);
                 break;
-            case "match-over":
-                Debug.Log($"Match ended.");
-                var matchOver = JsonConvert.DeserializeObject<MatchOver>(json);
-                _matchManager.GameOver(matchOver.isWinner);
-                // Handle match end logic here
+            case "match-ended":
+                var matchEnded = JsonConvert.DeserializeObject<MatchEnded>(json);
+                if (matchEnded?.matchId != null)
+                {
+                    _matchManager.MatchEnded(matchEnded.matchId);
+                }
                 break;
             default:
                 Debug.LogWarning($"Unsupported Match message action: {message.action}");

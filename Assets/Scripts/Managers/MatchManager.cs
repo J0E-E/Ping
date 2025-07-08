@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +7,9 @@ public class MatchManager : Manager
 {
     private WebsocketManager _websocketManager => ManagerLocator.Get<WebsocketManager>();
 
-    public static event Action MatchStateUpdated;
+    public static event Action OnMatchStateUpdated;
+    public static event Action OnMatchStarted;
+    public static event Action OnMatchEnded;
 
     private void OnEnable()
     {
@@ -67,7 +68,7 @@ public class MatchManager : Manager
         MatchState.MatchId = initializedMatch.matchId;
         UpdateMatchState(stateUpdate);
         Debug.Log($"Initializing Match. MatchId: {MatchState.MatchId}");
-
+        OnMatchStarted?.Invoke();
         SceneManager.LoadScene("Match");
     }
 
@@ -91,11 +92,24 @@ public class MatchManager : Manager
         MatchState.CurrentPhase = stateUpdate.currentPhase;
         MatchState.BallPossession = stateUpdate.ballPossession;
         MatchState.IsBallInPlay = stateUpdate.isBallInPlay;
-        MatchStateUpdated?.Invoke();
+        OnMatchStateUpdated?.Invoke();
     }
 
-    public void GameOver(bool isWinner)
+    public void MatchEnded(string matchId)
     {
-        Debug.Log(isWinner ? "WON GAME!" : "LOST GAME!");
+        if (matchId != MatchState.MatchId)
+        {
+            Debug.LogError($"Match Ended message received with incorrect matchId: {matchId}");
+            return;
+        }
+        Debug.Log("Match Ended");
+        OnMatchEnded?.Invoke();
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void EndMatch()
+    {
+        var endMatchMessage = new EndMatch();
+        _websocketManager.SendMessage(endMatchMessage);
     }
 }

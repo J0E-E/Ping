@@ -21,12 +21,16 @@ public class PingGameManager : GameManager
 
     private void OnEnable()
     {
-        MatchManager.MatchStateUpdated += OnMatchStateUpdated;
+        MatchManager.OnMatchStateUpdated += MatchStateUpdated;
+        MatchManager.OnMatchStarted += MatchStarted;
+        MatchManager.OnMatchEnded += MatchEnded;
     }
 
     private void OnDisable()
     {
-        MatchManager.MatchStateUpdated -= OnMatchStateUpdated;
+        MatchManager.OnMatchStateUpdated -= MatchStateUpdated;
+        MatchManager.OnMatchStarted -= MatchStarted;
+        MatchManager.OnMatchEnded -= MatchEnded;
     }
 
     protected override void Awake()
@@ -50,10 +54,18 @@ public class PingGameManager : GameManager
         return await _websocketManager.SendMessage(lobbyMessage);
     }
 
-    private void OnMatchStateUpdated()
+    private void MatchStarted()
     {
-        if (!_inMatch) _inMatch = true;
-        
+        _inMatch = true;
+    }
+
+    private void MatchEnded()
+    {
+        _inMatch = false;
+    }
+
+    private void MatchStateUpdated()
+    {
         if (_playerTypeModifier == 0)
         {
             _playerTypeModifier = MatchState.MyPlayerType == PlayerType.Player ? 1 : -1;
@@ -116,6 +128,7 @@ public class PingGameManager : GameManager
     private async void OnMove(InputValue inputValue)
     {
         if (!_inMatch) return;
+        
         Debug.Log(inputValue.Get<Vector2>());
         MovePaddle movePaddleMessage = new MovePaddle(MatchState.MatchId, inputValue.Get<Vector2>().x);
         await _websocketManager.SendMessage(movePaddleMessage);
@@ -123,7 +136,7 @@ public class PingGameManager : GameManager
 
     private async void OnRelease(InputValue inputValue)
     {
-        if (MatchState.IsBallInPlay || !MatchState.PlayersReady || MatchState.BallPossession != MatchState.MyPlayerType) return;
+        if (!_inMatch || inputValue?.Get() == null || MatchState.IsBallInPlay || !MatchState.PlayersReady || MatchState.BallPossession != MatchState.MyPlayerType) return;
         
         ReleaseBall releaseBallMessage = new ReleaseBall();
         await _websocketManager.SendMessage(releaseBallMessage);
@@ -131,7 +144,7 @@ public class PingGameManager : GameManager
 
     private async void OnTouch(InputValue inputValue)
     {
-        if (inputValue == null) return;
+        if (!_inMatch || inputValue?.Get() == null) return;
         
         switch (inputValue.Get().ToString())
         {
@@ -151,8 +164,8 @@ public class PingGameManager : GameManager
     }
 
     private async void OnTouch2(InputValue inputValue)
-    {
-        if (inputValue == null) return;
+    {        
+        if (!_inMatch || inputValue?.Get() == null) return;
         
         switch (inputValue.Get().ToString())
         {
@@ -169,7 +182,7 @@ public class PingGameManager : GameManager
 
     private async void OnSwipeLeft(InputValue inputValue)
     {
-        if (inputValue == null) return;
+        if (!_inMatch || inputValue?.Get() == null) return;
      
         if (inputValue.Get<float>() > 0 && _isTouching && !_isMovingLeft)
         {
@@ -183,6 +196,8 @@ public class PingGameManager : GameManager
 
     private async void OnSwipeRight(InputValue inputValue)
     {
+        if (!_inMatch || inputValue?.Get() == null) return;
+        
         if (inputValue.Get<float>() > 0 && _isTouching && !_isMovingRight)
         {
             MovePaddle movePaddleMessage = new MovePaddle(MatchState.MatchId, 1);
