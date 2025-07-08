@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Match.unity
     guid: dc547a9bc06174e34bb0038a31537979
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: abc0010a1808f4793b29b4646a8286b2
   m_configObjects:
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 3629ed924b195447d8bcf5bfe05e04ae, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 4e9ee88c82f4b48ba980413003ff7edf, type: 2}

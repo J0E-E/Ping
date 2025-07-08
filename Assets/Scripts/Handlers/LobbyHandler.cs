@@ -17,6 +17,7 @@ public class LobbyHandler : MonoBehaviour
                 SessionContext.PlayerData = message.playerData;
                 break;
             case "update-players":
+                SessionContext.LobbyMembers = message.players;
                 OnUpdateLobby?.Invoke(message.players);
                 break;
             default:

@@ -60,9 +60,9 @@ public class MatchStateUpdate : MatchMessage
 
 
 [Serializable]
-public class MatchOver : MatchMessage
+public class MatchEnded : MatchMessage
 {
-    public bool isWinner;
+    public string matchId;
 }
 
 [Serializable]
@@ -115,6 +115,17 @@ public class ReleaseBall : MatchMessage
     public ReleaseBall()
     {
         this.action = "release-ball";
+        this.matchId = MatchState.MatchId;
+    }
+}
+
+[Serializable]
+public class EndMatch : MatchMessage
+{
+    public string matchId;
+    public EndMatch()
+    {
+        this.action = "end-match";
         this.matchId = MatchState.MatchId;
     }
 }
